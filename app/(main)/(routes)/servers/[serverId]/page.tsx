@@ -7,11 +7,10 @@ import { db } from "@/lib/db";
 import { ServerSidebar } from "@/components/server/server-sidebar";
 
 interface ServerPageProps {
-    children: React.ReactNode;
     params: { serverId: string };
 }
 
-export default async function ServerPage({ children, params }: ServerPageProps) {
+export default async function ServerPage({ params }: ServerPageProps) {
     const profile = await currentProfile();
 
     if (!profile) return redirectToSignIn();
@@ -42,7 +41,9 @@ export default async function ServerPage({ children, params }: ServerPageProps) 
             <div className="hidden md:flex h-full w-60 z-20 flex-col fixed inset-y-0">
                 <ServerSidebar serverId={params.serverId} />
             </div>
-            <main className="h-full md:pl-60">{children}</main>
+            <main className="h-full md:pl-60">
+                {/* Render your page content here */}
+            </main>
         </div>
     );
 }
