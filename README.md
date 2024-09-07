@@ -62,7 +62,7 @@ NEXT_PUBLIC_LIVEKIT_URL=
 
 ### Setup Prisma
 
-Add MySQL Database (PlanetScale)
+Add MySQL Database (RDS)
 
 ```shell
 npx prisma generate
