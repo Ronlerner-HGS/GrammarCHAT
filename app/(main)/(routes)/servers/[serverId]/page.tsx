@@ -34,6 +34,7 @@ export default async function ServerPage({ params }: ServerPageProps) {
         }
     });
 
+
     if (!isMember) return redirect("/");
 
     return (
