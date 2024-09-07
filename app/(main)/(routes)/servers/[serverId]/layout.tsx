@@ -7,9 +7,9 @@ import { db } from "@/lib/db";
 import { ServerSidebar } from "@/components/server/server-sidebar";
 
 export default async function ServerIdLayout({
-  children,
-  params
-}: {
+                                               children,
+                                               params
+                                             }: {
   children: React.ReactNode;
   params: { serverId: string };
 }) {
@@ -18,6 +18,14 @@ export default async function ServerIdLayout({
   if (!profile) return redirectToSignIn();
 
   const server = await db.server.findUnique({
+    where: {
+      id: params.serverId
+    }
+  });
+
+  if (!server) return redirect("/");
+
+  const isMember = await db.server.findFirst({
     where: {
       id: params.serverId,
       members: {
@@ -28,14 +36,14 @@ export default async function ServerIdLayout({
     }
   });
 
-  if (!server) return redirect("/");
+  if (!isMember) return redirect("/");
 
   return (
-    <div className="h-full">
-      <div className="hidden md:flex h-full w-60 z-20 flex-col fixed inset-y-0">
-        <ServerSidebar serverId={params.serverId} />
+      <div className="h-full">
+        <div className="hidden md:flex h-full w-60 z-20 flex-col fixed inset-y-0">
+          <ServerSidebar serverId={params.serverId} />
+        </div>
+        <main className="h-full md:pl-60">{children}</main>
       </div>
-      <main className="h-full md:pl-60">{children}</main>
-    </div>
   );
 }
