@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import "@uploadthing/react/styles.css";
+
 import { FileIcon, X } from "lucide-react";
 import Image from "next/image";
 
