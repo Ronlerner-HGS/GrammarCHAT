@@ -5,8 +5,8 @@ import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
 export async function PATCH(
-  req: Request,
-  { params }: { params: { channelId: string } }
+    req: Request,
+    { params }: { params: { channelId: string } }
 ) {
   try {
     const profile = await currentProfile();
@@ -25,17 +25,33 @@ export async function PATCH(
         status: 400
       });
 
-    const server = await db.server.update({
+    const server = await db.server.findUnique({
       where: {
         id: serverId,
-        members: {
-          some: {
-            profileId: profile.id,
-            role: {
-              in: [MemberRole.ADMIN, MemberRole.MODERATOR]
-            }
-          }
-        }
+      },
+    });
+
+    if (!server) {
+      return new NextResponse("Server not found", { status: 404 });
+    }
+
+    const isMember = await db.member.findFirst({
+      where: {
+        serverId: server.id,
+        profileId: profile.id,
+        role: {
+          in: [MemberRole.ADMIN, MemberRole.MODERATOR],
+        },
+      },
+    });
+
+    if (!isMember) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    const updatedServer = await db.server.update({
+      where: {
+        id: serverId,
       },
       data: {
         channels: {
@@ -43,28 +59,28 @@ export async function PATCH(
             where: {
               id: params.channelId,
               NOT: {
-                name: "general"
-              }
+                name: "general",
+              },
             },
             data: {
               name,
-              type
-            }
-          }
-        }
-      }
+              type,
+            },
+          },
+        },
+      },
     });
 
-    return NextResponse.json(server);
+    return NextResponse.json(updatedServer);
   } catch (error) {
-    console.error("[CHANNEL_ID_PATCH", error);
+    console.error("[CHANNEL_ID_PATCH]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { channelId: string } }
+    req: Request,
+    { params }: { params: { channelId: string } }
 ) {
   try {
     const profile = await currentProfile();
@@ -77,33 +93,49 @@ export async function DELETE(
     if (!params.channelId)
       return new NextResponse("Channel ID Missing", { status: 400 });
 
-    const server = await db.server.update({
+    const server = await db.server.findUnique({
       where: {
         id: serverId,
-        members: {
-          some: {
-            profileId: profile.id,
-            role: {
-              in: [MemberRole.ADMIN, MemberRole.MODERATOR]
-            }
-          }
-        }
+      },
+    });
+
+    if (!server) {
+      return new NextResponse("Server not found", { status: 404 });
+    }
+
+    const isMember = await db.member.findFirst({
+      where: {
+        serverId: server.id,
+        profileId: profile.id,
+        role: {
+          in: [MemberRole.ADMIN, MemberRole.MODERATOR],
+        },
+      },
+    });
+
+    if (!isMember) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    const updatedServer = await db.server.update({
+      where: {
+        id: serverId,
       },
       data: {
         channels: {
           delete: {
             id: params.channelId,
             name: {
-              not: "general"
-            }
-          }
-        }
-      }
+              not: "general",
+            },
+          },
+        },
+      },
     });
 
-    return NextResponse.json(server);
+    return NextResponse.json(updatedServer);
   } catch (error) {
-    console.error("[CHANNEL_ID_DELETE", error);
+    console.error("[CHANNEL_ID_DELETE]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
