@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 const Sheet = SheetPrimitive.Root
 
@@ -13,12 +14,11 @@ const SheetTrigger = SheetPrimitive.Trigger
 
 const SheetClose = SheetPrimitive.Close
 
-const SheetPortal = ({
-  className,
-  ...props
-}: SheetPrimitive.DialogPortalProps) => (
-  <SheetPrimitive.Portal className={cn(className)} {...props} />
-)
+
+
+const SheetPortal = (props: DialogPrimitive.DialogPortalProps) => (
+    <DialogPrimitive.Portal {...props} />
+);
 SheetPortal.displayName = SheetPrimitive.Portal.displayName
 
 const SheetOverlay = React.forwardRef<
