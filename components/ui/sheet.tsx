@@ -117,7 +117,7 @@ const SheetTitle = React.forwardRef<
   />
 ))
 SheetTitle.displayName = SheetPrimitive.Title.displayName
-// nigga
+// hey
 const SheetDescription = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
